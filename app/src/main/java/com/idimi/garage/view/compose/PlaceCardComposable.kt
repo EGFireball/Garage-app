@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -107,7 +108,8 @@ fun PlaceCard(
         modifier = modifier
             .fillMaxWidth()
             .height(if (expanded) 520.dp else 200.dp)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .testTag("placeCard"),
         shape = RoundedCornerShape(12.dp),
     ) {
         Column(
@@ -156,6 +158,7 @@ fun PlaceCard(
                     horizontalAlignment = Alignment.Start
                 ) {
                     Text(
+                        modifier = Modifier.testTag("placeName"),
                         text = place.name,
                         fontSize = 16.sp
                     )

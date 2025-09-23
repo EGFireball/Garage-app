@@ -17,7 +17,7 @@ interface PlaceDAO {
     suspend fun update(place: Place)
 
     @Query("SELECT * FROM pois")
-    fun getAllPois(): Flow<List<Place>>
+    fun getAllPlacesAsFlow(): Flow<List<Place>>
 
     @Query("SELECT * FROM pois WHERE poiId = :poiId")
     suspend fun getPoiById(poiId: Int): Place

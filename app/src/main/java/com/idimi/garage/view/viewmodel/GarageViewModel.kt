@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import com.idimi.garage.datamodel.model.Place
 import com.idimi.garage.datamodel.model.Vehicle
 import com.idimi.garage.repo.GarageRepo
-import com.idimi.garage.sysflows.collectPoisAsFlow
+import com.idimi.garage.sysflows.collectPlacesAsFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,7 +39,7 @@ class GarageViewModel @Inject constructor(
     }
 
     suspend fun getAllPlaces() = withContext(Dispatchers.IO) {
-        collectPoisAsFlow(garageRepo, this).collect { result ->
+        collectPlacesAsFlow(garageRepo, this).collect { result ->
             if (result.data != null && result.data.isNotEmpty()) {
                 allPlaces.addAll(result.data)
                 _placesStateFlow.emit(result.data)
@@ -94,6 +94,6 @@ class GarageViewModel @Inject constructor(
     }
 
     fun isItemFavorite(place: Place, isFavorite: (Boolean) -> Unit) {
-        isFavorite(_placesStateFlow.value.first { it.poiId == place.poiId }.isFavorite)
+        isFavorite(_placesStateFlow.value.firstOrNull { it.poiId == place.poiId }?.isFavorite == true)
     }
 }

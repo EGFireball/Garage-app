@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -41,7 +42,7 @@ fun EnhancedRatingBar(
     var currentRating by remember(rating) { mutableStateOf(rating) }
 
     Row(
-        modifier = modifier.wrapContentSize(),
+        modifier = modifier.wrapContentSize().testTag("ratingBar"),
         horizontalArrangement = Arrangement.spacedBy(spacing)
     ) {
         (1..maxRating).forEach { step ->

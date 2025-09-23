@@ -15,13 +15,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.yield
 
-fun collectPoisAsFlow(
+fun collectPlacesAsFlow(
     garageRepo: GarageRepo,
     coroutineScope: CoroutineScope
 ) : Flow<Resource<List<Place>>> {
     return cacheBoundResource(
         fetchFromLocal = {
-            garageRepo.db.getPlaceDao().getAllPois()
+            garageRepo.db.getPlaceDao().getAllPlacesAsFlow()
         },
         shouldFetchFromRemote = {
             isNetworkAvailable(GarageApp.getAppContext()) && it.isNullOrEmpty()
