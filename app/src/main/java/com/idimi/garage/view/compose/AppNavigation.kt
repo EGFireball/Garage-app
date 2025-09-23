@@ -215,7 +215,7 @@ fun PlacesScreen(
     garageViewModel: GarageViewModel,
 ) {
 
-    val items = garageViewModel.poisStateFlow.collectAsStateWithLifecycle()
+    val items = garageViewModel.placesStateFlow.collectAsStateWithLifecycle()
 
     val isFavoriteSelected = remember {
         mutableStateOf(false)
@@ -226,7 +226,7 @@ fun PlacesScreen(
     }
 
     LaunchedEffect(Unit) {
-        garageViewModel.getAllPois()
+        garageViewModel.getAllPlaces()
     }
 
     Column(

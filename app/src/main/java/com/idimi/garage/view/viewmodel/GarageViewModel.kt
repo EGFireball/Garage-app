@@ -24,10 +24,10 @@ class GarageViewModel @Inject constructor(
     private val garageRepo: GarageRepo
 ): ViewModel() {
 
-    private val allPois: MutableList<Place> = mutableListOf()
+    private val allPlaces: MutableList<Place> = mutableListOf()
 
-    private val _poisStateFlow = MutableStateFlow<List<Place>>(emptyList())
-    val poisStateFlow = _poisStateFlow.asStateFlow()
+    private val _placesStateFlow = MutableStateFlow<List<Place>>(emptyList())
+    val placesStateFlow = _placesStateFlow.asStateFlow()
 
     private val _vehicleStateFlow = MutableStateFlow<List<Vehicle>>(emptyList())
     val vehicleStateFlow = _vehicleStateFlow.asStateFlow()
@@ -38,23 +38,22 @@ class GarageViewModel @Inject constructor(
         currentVehicleImage.value = null
     }
 
-    suspend fun getAllPois() = withContext(Dispatchers.IO) {
+    suspend fun getAllPlaces() = withContext(Dispatchers.IO) {
         collectPoisAsFlow(garageRepo, this).collect { result ->
             if (result.data != null && result.data.isNotEmpty()) {
-                allPois.addAll(result.data)
-                _poisStateFlow.emit(result.data)
+                allPlaces.addAll(result.data)
+                _placesStateFlow.emit(result.data)
             }
         }
     }
 
     fun showOnlyFavoritePlaces() {
-        val temp = allPois
-        val favorites = temp.filter { it.isFavorite }
-        _poisStateFlow.value = favorites
+        val favorites = allPlaces.filter { it.isFavorite }.toSet()
+        _placesStateFlow.value = favorites.toList()
     }
 
     fun showAllPlaces() {
-        _poisStateFlow.value = allPois
+        _placesStateFlow.value = allPlaces
     }
 
     suspend fun getAllVehicles() = withContext(Dispatchers.IO) {
@@ -95,6 +94,6 @@ class GarageViewModel @Inject constructor(
     }
 
     fun isItemFavorite(place: Place, isFavorite: (Boolean) -> Unit) {
-        isFavorite(_poisStateFlow.value.first { it.poiId == place.poiId }.isFavorite)
+        isFavorite(_placesStateFlow.value.first { it.poiId == place.poiId }.isFavorite)
     }
 }

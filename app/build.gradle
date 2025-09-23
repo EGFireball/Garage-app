@@ -1,6 +1,6 @@
 plugins {
     id 'kotlin-kapt'
-//    id 'com.google.devtools.ksp'
+    id("com.google.devtools.ksp")
     id 'com.google.dagger.hilt.android'
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -21,7 +21,10 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+//        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+//        testInstrumentationRunner "de.mannodermaus.junit5.AndroidJUnit5Builder"
+//        testInstrumentationRunner "com.idimi.garage.CustomTestRunner"
+        testInstrumentationRunner "dagger.hilt.android.testing.HiltTestApplication"
     }
 
     buildTypes {
@@ -89,7 +92,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     annotationProcessor libs.androidx.room.compiler
     implementation libs.androidx.room.ktx
-    kapt libs.androidx.room.compiler
+    ksp libs.androidx.room.compiler
 
     // Hilt
     implementation libs.hilt.android
@@ -98,6 +101,8 @@ dependencies {
 //    implementation libs.hilt.compiler
     kapt libs.hilt.android.compiler
 //    ksp libs.hilt.compiler
+    implementation libs.androidx.hilt.navigation.compose
+    androidTestImplementation(libs.hilt.android.testing)
 
     // Google Play
     implementation(libs.play.services.maps)
@@ -129,11 +134,23 @@ dependencies {
 
     // - Mock
     testImplementation(libs.mockk)
+    androidTestImplementation libs.mockk.android
 
     // Android
     androidTestImplementation(libs.androidx.core)
     androidTestImplementation(libs.core.ktx)
     androidTestImplementation(libs.androidx.runner)
     androidTestImplementation(libs.androidx.rules)
+
+    androidTestImplementation(libs.junit.jupiter.api)
+    androidTestRuntimeOnly(libs.junit.jupiter.engine)
+
+
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.test.manifest)
+
+    androidTestImplementation("de.mannodermaus.junit5:android-test-core:1.8.0")
+    androidTestRuntimeOnly("de.mannodermaus.junit5:android-test-runner:1.8.0")
+
 
 }
