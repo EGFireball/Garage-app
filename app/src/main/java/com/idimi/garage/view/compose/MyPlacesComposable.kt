@@ -9,6 +9,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,6 +31,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.SelectableChipColors
 import androidx.compose.material3.SwitchColors
@@ -50,6 +52,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -93,6 +96,7 @@ fun PlacesScreen(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        Spacer(Modifier.height(12.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -100,10 +104,12 @@ fun PlacesScreen(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            Spacer(Modifier.width(24.dp))
             FilterChip(
                 modifier = Modifier
-                    .wrapContentWidth()
-                    .height(40.dp),
+                    .weight(1f)
+                    .height(48.dp)
+                    .align(Alignment.CenterVertically),
                 colors = SelectableChipColors(
                     containerColor = getTheme().primaryContainer,
                     labelColor = getTheme().onSecondary,
@@ -126,14 +132,24 @@ fun PlacesScreen(
                     isFavoriteSelected.value = false
                 },
                 label = {
-                    Text(text = "All",
-                        maxLines = 1) },
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "All",
+                            maxLines = 1,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                },
             )
-            Spacer(Modifier.width(12.dp))
+            Spacer(Modifier.width(24.dp))
             FilterChip(
                 modifier = Modifier
-                    .wrapContentWidth()
-                    .height(40.dp),
+                    .weight(1f)
+                    .height(48.dp)
+                    .align(Alignment.CenterVertically),
                 colors = SelectableChipColors(
                     containerColor = getTheme().primaryContainer,
                     labelColor = getTheme().onSecondary,
@@ -156,13 +172,21 @@ fun PlacesScreen(
                     isFavoriteSelected.value = true
                 },
                 label = {
-                    Text(
-                        text = "Favorites",
-                        maxLines = 1
-                    )
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Favorites",
+                            maxLines = 1,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 },
             )
+            Spacer(Modifier.width(24.dp))
         }
+        Spacer(Modifier.height(8.dp))
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -231,15 +255,21 @@ fun PlaceCard(
             .fillMaxWidth()
             .height(if (expanded) 520.dp else 200.dp)
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .testTag("placeCard"),
+            .testTag("placeCard")
+            .clickable {
+                expanded = !expanded
+            },
+        colors = CardColors(
+            contentColor = getTheme().onPrimary,
+            containerColor = getTheme().background,
+            disabledContentColor = Color.Transparent,
+            disabledContainerColor = Color.Transparent
+        ),
         shape = RoundedCornerShape(12.dp),
     ) {
         Column(
             modifier = Modifier
-                .wrapContentSize()
-                .clickable {
-                    expanded = !expanded
-                },
+                .wrapContentSize(),
         ) {
             Row(
                 modifier = Modifier
@@ -314,8 +344,8 @@ fun PlaceCard(
                         }
                     },
                     colors = SwitchColors(
-                        checkedTrackColor = getTheme().secondaryContainer,
-                        uncheckedTrackColor = getTheme().background,
+                        checkedTrackColor = getTheme().primaryContainer,
+                        uncheckedTrackColor = getTheme().secondaryContainer,
                         checkedThumbColor = getTheme().primaryContainer,
                         uncheckedThumbColor = getTheme().secondaryContainer,
                         checkedBorderColor = Color.Transparent,

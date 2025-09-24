@@ -175,8 +175,7 @@ fun BottomBarWithNavHost(garageViewModel: GarageViewModel) {
                                 },
                                 label = {
                                     Text(
-                                        text = screen.title,
-                                        //color = getTheme().onPrimary
+                                        text = screen.title
                                     )
                                 }
                             )
