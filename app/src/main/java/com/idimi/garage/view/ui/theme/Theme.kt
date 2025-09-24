@@ -1,7 +1,6 @@
 package com.idimi.garage.view.ui.theme
 
 import android.os.Build
-import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
@@ -13,21 +12,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = GreenPrimaryDark,
-    secondary = GreenSecondaryDark,
-    onPrimary = GreenOnPrimaryDark,
-    onSecondary = GreenOnSecondaryDark,
-    primaryContainer = GreenPrimaryContainerDark,
-    secondaryContainer = GreenSecondaryContainerDark,
+    primary = PrimaryDark,
+    secondary = SecondaryDark,
+    onPrimary = OnPrimaryDark,
+    onSecondary = OnSecondaryDark,
+    primaryContainer = PrimaryContainerDark,
+    secondaryContainer = SecondaryContainerDark,
+    tertiary = TertiaryDark,
+    background = Background
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = GreenPrimary,
-    secondary = GreenSecondary,
-    onPrimary = WhiteOnPrimary,
-    onSecondary = WhiteOnSecondary,
-    primaryContainer = GreenPrimaryContainer,
-    secondaryContainer = GreenSecondaryContainer,
+    primary = Primary,
+    secondary = Secondary,
+    onPrimary = OnPrimary,
+    onSecondary = OnSecondary,
+    primaryContainer = PrimaryContainer,
+    secondaryContainer = SecondaryContainer,
+    tertiary = Tertiary,
+    background = Background
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),

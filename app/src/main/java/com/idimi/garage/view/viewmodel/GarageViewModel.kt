@@ -2,6 +2,7 @@ package com.idimi.garage.view.viewmodel
 
 import android.content.Context
 import android.net.Uri
+import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
+import java.lang.reflect.Modifier.PRIVATE
 import java.util.UUID
 import javax.inject.Inject
 
@@ -23,8 +25,7 @@ import javax.inject.Inject
 class GarageViewModel @Inject constructor(
     private val garageRepo: GarageRepo
 ): ViewModel() {
-
-    private val allPlaces: MutableList<Place> = mutableListOf()
+    val allPlaces: MutableList<Place> = mutableListOf()
 
     private val _placesStateFlow = MutableStateFlow<List<Place>>(emptyList())
     val placesStateFlow = _placesStateFlow.asStateFlow()
@@ -39,12 +40,13 @@ class GarageViewModel @Inject constructor(
     }
 
     suspend fun getAllPlaces() = withContext(Dispatchers.IO) {
-        collectPlacesAsFlow(garageRepo, this).collect { result ->
+        collectPlacesAsFlow(garageRepo).collect { result ->
             if (result.data != null && result.data.isNotEmpty()) {
                 allPlaces.addAll(result.data)
                 _placesStateFlow.emit(result.data)
             }
         }
+        allPlaces
     }
 
     fun showOnlyFavoritePlaces() {

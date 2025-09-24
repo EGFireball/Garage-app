@@ -31,6 +31,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchColors
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -43,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
@@ -288,18 +290,22 @@ fun CustomIconSwitch(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    colors: SwitchColors,
+    filledIcon: ImageVector,
+    outlinedIcon: ImageVector,
+    iconColor: Color,
     checkedIcon: @Composable (() -> Unit)? = {
         Icon(
-            imageVector = Icons.Filled.Star,
-            contentDescription = "On",
-            tint =  Color.Yellow
+            imageVector = filledIcon,
+            contentDescription = "Switch On",
+            tint = iconColor
         )
     },
     uncheckedIcon: @Composable (() -> Unit)? = {
         Icon(
-            imageVector = Icons.Outlined.Star,
-            contentDescription = "Off",
-            tint = Color.Yellow
+            imageVector = outlinedIcon,
+            contentDescription = "Switch Off",
+            tint = iconColor
         )
     }
 ) {
@@ -311,6 +317,7 @@ fun CustomIconSwitch(
         modifier = modifier,
         thumbContent = {
             if (checked) checkedIcon?.invoke() else uncheckedIcon?.invoke()
-        }
+        },
+        colors = colors
     )
 }

@@ -25,18 +25,18 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun EnhancedRatingBar(
+    modifier: Modifier = Modifier,
     rating: Float,
     onRatingChange: (Float) -> Unit = {},
-    modifier: Modifier = Modifier,
     starSize: Dp = 24.dp,
     maxRating: Int = 5,
-    isReadOnly: Boolean = false,
+    isReadOnly: Boolean = true,
     spacing: Dp = 4.dp,
     ratingColor: Color = Color.Yellow,
     backgroundColor: Color = Color.Gray,
     filledStarImage: ImageVector = Icons.Filled.Star,  // Param for filled star image
     emptyStarImage: ImageVector = Icons.Outlined.Star,
-    onClickRating: () -> Unit = {},
+    onClickRating: (Float) -> Unit = {},
 ) {
     // Synchronize `currentRating` with `rating` dynamically
     var currentRating by remember(rating) { mutableStateOf(rating) }
@@ -64,7 +64,7 @@ fun EnhancedRatingBar(
                         }
                         onRatingChange(currentRating)
                     } else {
-                        onClickRating()
+                        onClickRating(step.toFloat())
                     }
                 }
             )

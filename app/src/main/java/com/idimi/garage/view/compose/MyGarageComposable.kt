@@ -50,6 +50,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
@@ -130,15 +131,17 @@ fun MyGarage(
                     Modifier
                         .size(80.dp)
                         .padding(end = 12.dp, bottom = 12.dp)
-                        .background(color = getTheme().primary, shape = CircleShape)
+                        .background(color = getTheme().tertiary, shape = RoundedCornerShape(40.dp))
                         .align(Alignment.BottomEnd),
                 onClick = {
                     showAddVehiclePopup = true
-                }
+                },
+                containerColor = getTheme().tertiary
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Add Vehicle"
+                    contentDescription = "Add Vehicle",
+                    tint = getTheme().onPrimary
                 )
             }
         }
@@ -234,7 +237,7 @@ fun VehicleItem(
                     .clickable {
                         onEditClicked(vehicle)
                     },
-                tint = getTheme().onPrimary,
+                tint = getTheme().onSecondary,
                 contentDescription = "Edit Vehicle Data",
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -308,7 +311,8 @@ fun AddVehiclePopup(
             tonalElevation = 4.dp,
             modifier = Modifier
                 .wrapContentSize()
-                .padding(4.dp)
+                .padding(4.dp),
+            contentColor = getTheme().background
         ) {
             Column(
                 modifier = Modifier.wrapContentSize(),
@@ -318,7 +322,8 @@ fun AddVehiclePopup(
                 Spacer(Modifier.height(16.dp))
                 Text(
                     text = "Add Vacation Vehicle",
-                    fontSize = 20.sp
+                    fontSize = 20.sp,
+                    color = getTheme().onPrimary
                 )
                 Spacer(Modifier.height(16.dp))
                 Row(
@@ -347,7 +352,9 @@ fun AddVehiclePopup(
                             .weight(1f)
                             .align(Alignment.CenterVertically),
                         text = "Vehicle Icon",
-                        fontSize = 16.sp)
+                        fontSize = 16.sp,
+                        color = getTheme().onPrimary
+                    )
                     Spacer(modifier = Modifier.width(16.dp))
                 }
                 Spacer(Modifier.height(8.dp))

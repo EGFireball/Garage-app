@@ -17,7 +17,6 @@ import kotlinx.coroutines.yield
 
 fun collectPlacesAsFlow(
     garageRepo: GarageRepo,
-    coroutineScope: CoroutineScope
 ) : Flow<Resource<List<Place>>> {
     return cacheBoundResource(
         fetchFromLocal = {

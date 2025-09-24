@@ -10,20 +10,25 @@ import androidx.compose.ui.graphics.Color
 //val PurpleGrey40 = Color(0xFF625b71)
 //val Pink40 = Color(0xFF7D5260)
 
-val GreenPrimary = Color(0xFF017137)
-val GreenSecondary = Color(0xFF01552e)
+val Primary = Color(0xFF81C784)
+val Secondary = Color(0xFF66BB6A)
+val OnPrimary = Color(0xFF111111)
+val OnSecondary = Color(0xFF222222)
+val Tertiary = Color(0xFF4CFF50)
+val Background = Color(0xFF555555)
 
-val WhiteOnPrimary = Color(0xFFff9988)
-val WhiteOnSecondary = Color(0xFFfffefe)
+val PrimaryContainer = Color(0xFF33AA27)
+val SecondaryContainer = Color(0xFF35AA1e)
 
-val GreenPrimaryContainer = Color(0xFF71fcb2)
-val GreenSecondaryContainer = Color(0xFF7cfbaa)
+val PrimaryDark = Color(0xFF43A047)
+val SecondaryDark = Color(0xFF388E3C)
 
-val GreenPrimaryDark = Color(0xFF52df98)
-val GreenSecondaryDark = Color(0xFF7cfbaa)
+val OnPrimaryDark = Color(0xFFFFFFFF)
+val OnSecondaryDark = Color(0xFFBBBBBB)
 
-val GreenOnPrimaryDark = Color(0xFF002308)
-val GreenOnSecondaryDark = Color(0xFF007012)
+val PrimaryContainerDark = Color(0xFF005527)
+val SecondaryContainerDark = Color(0xFF03551e)
 
-val GreenPrimaryContainerDark = Color(0xFF005527)
-val GreenSecondaryContainerDark = Color(0xFF03551e)
+val TertiaryDark = Color(0xFF4CAF50)
+
+val NonFavorite = Color(0xfffff1ae)
