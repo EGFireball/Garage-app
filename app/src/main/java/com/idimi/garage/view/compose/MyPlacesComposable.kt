@@ -1,13 +1,14 @@
 package com.idimi.garage.view.compose
 
 import android.content.Intent
-import android.util.Log
+import android.widget.ImageButton
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,19 +24,21 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.SelectableChipColors
 import androidx.compose.material3.SwitchColors
 import androidx.compose.material3.Text
@@ -80,7 +83,7 @@ fun PlacesScreen(
     garageViewModel: GarageViewModel,
 )
 {
-
+    val context = LocalContext.current
     val items = garageViewModel.placesStateFlow.collectAsStateWithLifecycle()
 
     val isFavoriteSelected = remember {
@@ -88,6 +91,10 @@ fun PlacesScreen(
     }
 
     val triggerListRecomposition = remember {
+        mutableStateOf(false)
+    }
+
+    var showMapWithPins by remember {
         mutableStateOf(false)
     }
 
@@ -184,17 +191,45 @@ fun PlacesScreen(
                 },
             )
             Spacer(Modifier.width(24.dp))
+            IconButton (
+                modifier = Modifier.size(48.dp),
+                onClick = {
+                    showMapWithPins = !showMapWithPins
+                }
+            ) {
+                Icon(
+                    imageVector = if (showMapWithPins) Icons.Default.Menu else Icons.Default.LocationOn,
+                    tint = getTheme().onPrimary,
+                    contentDescription = "Switch between List and Map view"
+                )
+            }
+            Spacer(Modifier.width(24.dp))
         }
         Spacer(Modifier.height(8.dp))
-        LazyColumn(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            items(items.value) { item ->
-                PlaceCard(
-                    garageViewModel = garageViewModel,
-                    place = item,
-                    triggerRecomposition = triggerListRecomposition
+        if (showMapWithPins) {
+            MapElement(
+                modifier = Modifier.fillMaxSize(),
+                places = items.value
+            ) { chosenPlace ->
+                context.startActivity(
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        chosenPlace.url.toUri()
+                    )
                 )
+                true
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(items.value) { item ->
+                    PlaceCard(
+                        garageViewModel = garageViewModel,
+                        place = item,
+                        triggerRecomposition = triggerListRecomposition
+                    )
+                }
             }
         }
     }
@@ -396,14 +431,12 @@ fun PlaceCard(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(320.dp),
-                        lat = place.latitude,
-                        lng = place.longtitude,
-                        markerTitle = place.name,
-                    ) { marker ->
+                       places = listOf(place)
+                    ) { chosenPlace ->
                         context.startActivity(
                             Intent(
                                 Intent.ACTION_VIEW,
-                                place.url.toUri()
+                                chosenPlace.url.toUri()
                             )
                         )
                         true

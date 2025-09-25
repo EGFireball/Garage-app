@@ -38,10 +38,14 @@ fun LocationCheckScreen() {
     var relaunchPermissionForLocation by remember {
         mutableStateOf(false)
     }
+    var showCheckLocationView by remember {
+        mutableStateOf(false)
+    }
     // Launcher for requesting location permission
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
+        showCheckLocationView = isGranted
         if (isGranted) {
             // if permission granted, immediately check location services
             if (!isLocationEnabled(context)) {
@@ -77,59 +81,62 @@ fun LocationCheckScreen() {
         relaunchPermissionForLocation = false
     }
     // UI scaffold with Snackbar host
-    Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize()
-                .padding(24.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(text = "GPS & Permission check demo")
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = {
-                // Request permission when button pressed
-                permissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
-            }) {
-                Text("Request location & check GPS")
-            }
-            Spacer(modifier = Modifier.height(12.dp))
-            Button(onClick = {
-                // manual quick-check (if permission already granted)
-                if (!isPermissionGranted(context)) {
-                    coroutineScope.launch {
-                        snackbarHostState.showSnackbar(
-                            message = "Please grant location permission first",
-                            actionLabel = "Grant"
-                        ).let { res ->
-                            if (res == androidx.compose.material3.SnackbarResult.ActionPerformed) {
-                                permissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
+    if (showCheckLocationView) {
+        Scaffold(
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+        ) { padding ->
+            Column(
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxSize()
+                    .padding(24.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "GPS & Permission check demo")
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(onClick = {
+                    // Request permission when button pressed
+                    permissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
+                }) {
+                    Text("Request location & check GPS")
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                Button(onClick = {
+                    // manual quick-check (if permission already granted)
+                    if (!isPermissionGranted(context)) {
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar(
+                                message = "Please grant location permission first",
+                                actionLabel = "Grant"
+                            ).let { res ->
+                                if (res == androidx.compose.material3.SnackbarResult.ActionPerformed) {
+                                    permissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
+                                }
                             }
                         }
+                        return@Button
                     }
-                    return@Button
-                }
-                if (!isLocationEnabled(context)) {
-                    coroutineScope.launch {
-                        snackbarHostState.showSnackbar(
-                            message = "GPS is OFF. Enable it in settings.",
-                            actionLabel = "Open settings"
-                        ).let { result ->
-                            if (result == androidx.compose.material3.SnackbarResult.ActionPerformed) {
-                                context.openLocationSettings()
+                    if (!isLocationEnabled(context)) {
+                        showCheckLocationView = false
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar(
+                                message = "GPS is OFF. Enable it in settings.",
+                                actionLabel = "Open settings"
+                            ).let { result ->
+                                if (result == androidx.compose.material3.SnackbarResult.ActionPerformed) {
+                                    context.openLocationSettings()
+                                }
                             }
                         }
+                    } else {
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar("GPS is ON — good to go!")
+                        }
                     }
-                } else {
-                    coroutineScope.launch {
-                        snackbarHostState.showSnackbar("GPS is ON — good to go!")
-                    }
+                }) {
+                    Text("Quick check (permission + GPS)")
                 }
-            }) {
-                Text("Quick check (permission + GPS)")
             }
         }
     }

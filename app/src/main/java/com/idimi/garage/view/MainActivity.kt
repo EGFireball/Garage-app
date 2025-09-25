@@ -83,7 +83,7 @@ class MainActivity : ComponentActivity() {
             mutableStateOf(false)
         }
 
-        LaunchedEffect(Unit) {
+        LaunchedEffect(key1 = Unit, key2 = showErrorScreen) {
             // Get Places from Database or from Server
             garageViewModel.getAllPlaces()
 
@@ -95,7 +95,8 @@ class MainActivity : ComponentActivity() {
                 coroutineScope.launch {
                     snackbarHostState.showSnackbar(
                         message = "No internet connection",
-                        actionLabel = "Open settings"
+                        actionLabel = "Open settings",
+                        withDismissAction = true
                     ).let { result ->
                         if (result == SnackbarResult.ActionPerformed) {
                             context.openNetworkSettings()
@@ -108,46 +109,48 @@ class MainActivity : ComponentActivity() {
         }
         if (showErrorScreen) {
             // No Internet screen
-            Scaffold(
-                snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
-            ) { padding ->
-                Column(
-                    modifier = Modifier.fillMaxSize().padding(padding),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = "Not Internet Connection.\nCheck your Network Settings.",
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(Modifier.height(8.dp))
-                    Text(
-                        text = "If you already switched ON your Network, press 'Reload'",
-                        fontSize = 20.sp,
-                        fontStyle = FontStyle.Italic,
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(Modifier.height(8.dp))
-                    Button(
-                        onClick = {
-                            if (!isNetworkAvailable(context)) {
-                                coroutineScope.launch {
-                                    Toast.makeText(
-                                        context,
-                                        "You are still NOT connected to the Internet. Check network settings.",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                                return@Button
-                            }
-                            showErrorScreen = false
-                        }
+            GarageTheme {
+                Scaffold(
+                    snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+                ) { padding ->
+                    Column(
+                        modifier = Modifier.fillMaxSize().padding(padding),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = "Reload",
+                            text = "Not Internet Connection.\nCheck your Network Settings.",
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
                         )
+                        Spacer(Modifier.height(8.dp))
+                        Text(
+                            text = "If you already switched ON your Network, press 'Reload'",
+                            fontSize = 20.sp,
+                            fontStyle = FontStyle.Italic,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        Button(
+                            onClick = {
+                                if (!isNetworkAvailable(context)) {
+                                    coroutineScope.launch {
+                                        Toast.makeText(
+                                            context,
+                                            "You are still NOT connected to the Internet. Check network settings.",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                    return@Button
+                                }
+                                showErrorScreen = false
+                            }
+                        ) {
+                            Text(
+                                text = "Reload",
+                            )
+                        }
                     }
                 }
             }
