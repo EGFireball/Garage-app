@@ -17,7 +17,7 @@ The project has Unit and Instrumentation tests. For th
 
 App Architecture:
 
-MVVM/MVI blend based on the Clear Architecture pattern. It has View Layer, which holds all the Composable views and the ViewModel, Repository Layer and Data providing Layer.
+MVVM/MVI blend based on the Clean Architecture pattern. It has View Layer, which holds all the Composable views and the ViewModel, Repository Layer and Data providing Layer.
   
 Running tests:
 
