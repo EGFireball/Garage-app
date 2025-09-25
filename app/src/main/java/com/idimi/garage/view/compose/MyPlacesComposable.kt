@@ -57,10 +57,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -73,6 +76,7 @@ import com.idimi.garage.view.compose.components.MapElement
 import com.idimi.garage.view.compose.util.BuildImageLoader
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.idimi.garage.R
 import com.idimi.garage.view.compose.components.CustomIconSwitch
 import com.idimi.garage.view.ui.theme.NonFavorite
 import com.idimi.garage.view.ui.theme.getTheme
@@ -256,7 +260,7 @@ fun PlaceCard(
     }
 
     val iconRotation by animateFloatAsState(
-        if (expanded) 180f else 0f, tween(durationMillis = 300)
+        if (expanded) 180f else 0f, tween(durationMillis = 250)
     )
 
     val elevation by animateDpAsState(
@@ -371,11 +375,15 @@ fun PlaceCard(
                     Text(
                         modifier = Modifier.testTag("placeName"),
                         text = place.name,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
                     )
                     Text(
                         text = place.primaryCategoryDisplayName,
-                        fontSize = 14.sp
+                        fontSize = 14.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     EnhancedRatingBar(
@@ -389,9 +397,9 @@ fun PlaceCard(
                         .width(60.dp)
                         .wrapContentHeight(),
                     checked = isFavorite.value,
-                    filledIcon = Icons.Filled.Star,
-                    outlinedIcon = Icons.Outlined.Star,
-                    iconColor = if(isFavorite.value) Color.Yellow else NonFavorite,
+                    filledIcon = ImageVector.vectorResource(R.drawable.ic_filled_heart),
+                    outlinedIcon = ImageVector.vectorResource(R.drawable.ic_outlined_heart),
+                    iconColor = if(isFavorite.value) Color.Red else NonFavorite,
                     onCheckedChange = { isChecked ->
                         coroutineScope.launch {
                             garageViewModel.changeFavoriteStateForPlace(
@@ -427,8 +435,8 @@ fun PlaceCard(
                 // Expandable content
                 AnimatedVisibility(
                     visible = expanded,
-                    enter = expandVertically(tween(durationMillis = 500)),
-                    exit = shrinkVertically(tween(durationMillis = 500))
+                    enter = expandVertically(tween(durationMillis = 300)),
+                    exit = shrinkVertically(tween(durationMillis = 300))
                 ) {
                     MapElement(
                         modifier = Modifier

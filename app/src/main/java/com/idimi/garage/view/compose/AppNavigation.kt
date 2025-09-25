@@ -50,64 +50,10 @@ import com.idimi.garage.view.ui.theme.getTheme
 import com.idimi.garage.view.viewmodel.GarageViewModel
 
 sealed class NavScreen(val route: String, val title: String) {
-    object Garage : NavScreen("garage", "Garage")
-    object Places : NavScreen("places", "Places")
+    object Garage : NavScreen("garage", "My Garage")
+    object Places : NavScreen("places", "My Places")
 //    object Favorites : NavScreen("favorites", "Favorites")
 }
-
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//fun TabsWithNavHost() {
-//    val navController = rememberNavController()
-//    val tabs = listOf(NavScreen.Garage, NavScreen.Places, NavScreen.Favorites)
-//
-//    Scaffold(
-//        topBar = {
-//            TopAppBar(title = { "My Vacation Garage" })
-//        }
-//    ) { padding ->
-//        val navBackStackEntry by navController.currentBackStackEntryAsState()
-//        val currentRoute = navBackStackEntry?.destination?.route ?: NavScreen.Garage.route
-//
-//        Column(Modifier.padding(padding)) {
-//            TabRow(selectedTabIndex = tabs.indexOfFirst {
-//                it.route == currentRoute
-//            }) {
-//                tabs.forEach { screen ->
-//                    Tab(
-//                        selected = currentRoute == screen.route,
-//                        onClick = {
-//                            navController.navigate(screen.route) {
-//                                launchSingleTop = true
-//                                restoreState = true
-//                                popUpTo(
-//                                    navController.graph.startDestinationId
-//                                ) { saveState = true }
-//                            }
-//                        },
-//                        text = { Text(screen.title) }
-//                    )
-//                }
-//            }
-//            NavHost (
-//                navController = navController,
-//                startDestination = NavScreen.Garage.route,
-//                modifier = Modifier.fillMaxSize()
-//            ) {
-//                composable(NavScreen.Garage.route) {
-//                    BuildScreenContent("GARAGE")
-//                }
-//                composable(NavScreen.Places.route) {
-//                    BuildScreenContent("PLACES")
-//                }
-//                composable(NavScreen.Favorites.route) {
-//                    BuildScreenContent("FAVORITES")
-//                }
-//            }
-//        }
-//    }
-//}
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
