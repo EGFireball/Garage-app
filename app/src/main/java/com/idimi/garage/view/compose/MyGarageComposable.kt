@@ -77,6 +77,7 @@ import com.idimi.garage.view.ui.theme.getTheme
 import com.idimi.garage.view.viewmodel.GarageViewModel
 import kotlinx.coroutines.launch
 import java.io.File
+import java.util.Calendar
 import java.util.Locale
 
 @Composable
@@ -290,7 +291,7 @@ fun AddVehiclePopup(
 
     val yearState = remember {
         mutableIntStateOf(
-            vehicleForEdit?.year ?: -1
+            vehicleForEdit?.year ?: Calendar.getInstance().get(Calendar.YEAR)
         )
     }
 

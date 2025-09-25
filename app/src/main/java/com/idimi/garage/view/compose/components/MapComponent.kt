@@ -24,7 +24,7 @@ fun MapElement(
         position = CameraPosition.fromLatLngZoom(
             //42.73402187319283, 23.29990188407221
             LatLng(places[0].latitude, places[0].longtitude),
-            if (places.size == 1) 14f else 13f
+            if (places.size == 1) 17f else 13f
         )
     }
     GoogleMap(

@@ -16,7 +16,7 @@ interface PlaceDAO {
     @Update
     suspend fun update(place: Place)
 
-    @Query("SELECT * FROM pois ORDER by name")
+    @Query("SELECT * FROM pois ORDER by rating DESC")
     fun getAllPlacesAsFlow(): Flow<List<Place>>
 
     @Query("SELECT * FROM pois WHERE poiId = :poiId")
