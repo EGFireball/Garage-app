@@ -152,5 +152,7 @@ dependencies {
     androidTestImplementation(libs.android.test.core)
     androidTestRuntimeOnly(libs.android.test.runner)
 
-
+    // In this project Espresso is used only  because of the easy
+    // way to control the Soft Keyboard state in Instrumentation tests
+    androidTestImplementation(libs.androidx.espresso.core)
 }

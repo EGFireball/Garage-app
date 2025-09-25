@@ -1,6 +1,5 @@
 package com.idimi.garage
 
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
@@ -12,6 +11,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
+import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.idimi.garage.api.GarageAPI
 import com.idimi.garage.datamodel.RoomDB
@@ -122,6 +122,8 @@ class VehicleViewTests {
 
             composeTestRule.onNodeWithTag("addVehicleSubmit")
                 .assertIsNotEnabled()
+
+            Espresso.closeSoftKeyboard()
 
             // Click to expand dropdown
             composeTestRule

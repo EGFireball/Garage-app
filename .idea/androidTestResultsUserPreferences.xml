@@ -26,6 +26,7 @@
                   <entry key="Pixel_8a_API_34" value="120" />
                   <entry key="Tests" value="360" />
                   <entry key="motorola motorola edge 50 pro" value="120" />
+                  <entry key="samsung SM-S918B" value="120" />
                 </map>
               </option>
             </AndroidTestResultsTableState>
@@ -39,6 +40,8 @@
                   <entry key="Duration" value="90" />
                   <entry key="Pixel_8a_API_34" value="120" />
                   <entry key="Tests" value="360" />
+                  <entry key="motorola motorola edge 50 pro" value="120" />
+                  <entry key="samsung SM-S918B" value="120" />
                 </map>
               </option>
             </AndroidTestResultsTableState>

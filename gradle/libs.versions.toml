@@ -1,5 +1,5 @@
 [versions]
-agp = "8.13.0-rc01"
+agp = "8.13.0-rc02"
 androidInstrumentationTest = "1.3.0"
 androidTestRunner = "1.8.0"
 androidTestCore = "1.8.0"
