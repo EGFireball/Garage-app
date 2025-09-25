@@ -54,19 +54,19 @@ fun EnhancedRatingBar(
                 emptyStarColor = backgroundColor,
                 emptyStarImage = emptyStarImage,
                 filledStarImage = filledStarImage,
-                onClick = {
-                    if (!isReadOnly) {
-                        // Toggle the rating for the first star
-                        currentRating = if (step == currentRating.toInt() && step == 1) {
-                            0f // Deselect if the first star is tapped again
-                        } else {
-                            step.toFloat() // Set rating to the tapped star
-                        }
-                        onRatingChange(currentRating)
-                    } else {
-                        onClickRating(step.toFloat())
-                    }
-                }
+//                onClick = {
+//                    if (!isReadOnly) {
+//                        // Toggle the rating for the first star
+//                        currentRating = if (step == currentRating.toInt() && step == 1) {
+//                            0f // Deselect if the first star is tapped again
+//                        } else {
+//                            step.toFloat() // Set rating to the tapped star
+//                        }
+//                        onRatingChange(currentRating)
+//                    } else {
+//                        onClickRating(step.toFloat())
+//                    }
+//                }
             )
         }
     }
@@ -90,15 +90,15 @@ private fun RatingStar(
         modifier = Modifier
             .size(starSize)
             .then(
-                if (!isReadOnly) {
-                    Modifier.clickable(
-                        onClick = onClick,
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() }
-                    )
-                } else {
-                    Modifier // No clickable behavior
-                }
+//                if (!isReadOnly) {
+//                    Modifier.clickable(
+//                        onClick = onClick,
+//                        indication = null,
+//                        interactionSource = remember { MutableInteractionSource() }
+//                    )
+//                } else {
+                Modifier // No clickable behavior
+//                }
             )
     )
 }

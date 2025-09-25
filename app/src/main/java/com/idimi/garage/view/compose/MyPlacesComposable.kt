@@ -31,6 +31,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Star
@@ -56,6 +58,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -87,8 +90,7 @@ import kotlinx.coroutines.launch
 fun PlacesScreen(
     modifier: Modifier,
     garageViewModel: GarageViewModel,
-)
-{
+) {
     val context = LocalContext.current
     val items = garageViewModel.placesStateFlow.collectAsStateWithLifecycle()
 
@@ -197,8 +199,9 @@ fun PlacesScreen(
                 },
             )
             Spacer(Modifier.width(24.dp))
-            IconButton (
-                modifier = Modifier.size(48.dp)
+            IconButton(
+                modifier = Modifier
+                    .size(48.dp)
                     .border(1.dp, color = getTheme().onPrimary, shape = CircleShape),
                 onClick = {
                     showMapWithPins = !showMapWithPins
@@ -260,11 +263,7 @@ fun PlaceCard(
     }
 
     val iconRotation by animateFloatAsState(
-        if (expanded) 180f else 0f, tween(durationMillis = 250)
-    )
-
-    val elevation by animateDpAsState(
-        targetValue = if (expanded) 8.dp else 2.dp
+        if (expanded) 180f else 0f, tween(durationMillis = 350)
     )
 
     val isFavorite = remember {
@@ -315,11 +314,12 @@ fun PlaceCard(
         Column(
             modifier = Modifier
                 .wrapContentSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(180.dp),
+                    .weight(1f),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start
             ) {
@@ -399,7 +399,7 @@ fun PlaceCard(
                     checked = isFavorite.value,
                     filledIcon = ImageVector.vectorResource(R.drawable.ic_filled_heart),
                     outlinedIcon = ImageVector.vectorResource(R.drawable.ic_outlined_heart),
-                    iconColor = if(isFavorite.value) Color.Red else NonFavorite,
+                    iconColor = if (isFavorite.value) Color.Red else NonFavorite,
                     onCheckedChange = { isChecked ->
                         coroutineScope.launch {
                             garageViewModel.changeFavoriteStateForPlace(
@@ -431,29 +431,32 @@ fun PlaceCard(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
             }
-            if (expanded) {
-                // Expandable content
-                AnimatedVisibility(
-                    visible = expanded,
-                    enter = expandVertically(tween(durationMillis = 300)),
-                    exit = shrinkVertically(tween(durationMillis = 300))
-                ) {
-                    MapElement(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(320.dp),
-                       places = listOf(place)
-                    ) { chosenPlace ->
-                        context.startActivity(
-                            Intent(
-                                Intent.ACTION_VIEW,
-                                chosenPlace.url.toUri()
-                            )
+            // Expandable content
+            AnimatedVisibility(
+                visible = expanded,
+                enter = expandVertically(tween(durationMillis = 350)),
+                exit = shrinkVertically(tween(durationMillis = 350))
+            ) {
+                MapElement(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(320.dp),
+                    places = listOf(place)
+                ) { chosenPlace ->
+                    context.startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            chosenPlace.url.toUri()
                         )
-                        true
-                    }
+                    )
+                    true
                 }
             }
+            Icon(
+                modifier = Modifier.rotate(iconRotation),
+                imageVector = Icons.Default.KeyboardArrowDown,
+                contentDescription = "Collapse/Expand Card view"
+            )
         }
     }
 }

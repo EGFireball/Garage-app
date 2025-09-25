@@ -5,6 +5,11 @@ import android.util.Log
 import android.widget.Space
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,6 +19,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,6 +38,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
@@ -48,17 +55,20 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -169,11 +179,23 @@ fun VehicleItem(
     vehicle: Vehicle,
     onEditClicked: (Vehicle) -> Unit
 ) {
+
+    var expanded by rememberSaveable {
+        mutableStateOf(true)
+    }
+
+    val iconRotation by animateFloatAsState(
+        if (expanded) 180f else 0f, tween(durationMillis = 350)
+    )
+
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .height(200.dp)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .height(if (expanded) 320.dp else 180.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .clickable {
+                expanded = !expanded
+            },
         colors = CardColors(
             contentColor = getTheme().onPrimary,
             containerColor = getTheme().background,
@@ -182,75 +204,157 @@ fun VehicleItem(
         ),
         shape = RoundedCornerShape(12.dp),
     ) {
-        Row(
+        Spacer(modifier = Modifier.width(8.dp))
+        Column(
             modifier = Modifier.fillMaxSize(),
-            verticalAlignment = Alignment.CenterVertically
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.width(8.dp))
-            if (vehicle.iconURL != null) {
-                AsyncImage(
-                    model = File(vehicle.iconURL!!),
-                    contentDescription = "Selected image",
-                    modifier = Modifier
-                        .size(120.dp)
-                        .clip(RoundedCornerShape(16.dp)),
-                    contentScale = ContentScale.Crop
-                )
-            } else {
-                Icon(
-                    modifier = Modifier
-                        .size(120.dp)
-                        .clip(RoundedCornerShape(16.dp)),
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_car),
-                    contentDescription = "Default Vehicle Icon"
-                )
-            }
-            Spacer(modifier = Modifier.width(12.dp))
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight(),
-                verticalArrangement = Arrangement.Center
+            Row(
+                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
             ) {
-                Row {
-                    Text(text = "Vehicle name: ")
-                    Text(text = vehicle.name)
+                Spacer(modifier = Modifier.width(8.dp))
+                if (vehicle.iconURL != null) {
+                    AsyncImage(
+                        model = File(vehicle.iconURL!!),
+                        contentDescription = "Selected image",
+                        modifier = Modifier
+                            .size(135.dp)
+                            .clip(RoundedCornerShape(16.dp)),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Icon(
+                        modifier = Modifier
+                            .size(135.dp)
+                            .clip(RoundedCornerShape(16.dp)),
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_car),
+                        contentDescription = "Default Vehicle Icon"
+                    )
                 }
-                Spacer(Modifier.height(4.dp))
-                Row {
-                    Text(text = "Manufacturer: ")
-                    Text(text = vehicle.make)
+                Spacer(modifier = Modifier.width(12.dp))
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .wrapContentHeight(),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Row {
+                        Text(
+                            text = "Vehicle name: ",
+                            fontSize = 16.sp
+                        )
+                        Text(
+                            text = vehicle.name,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    Row {
+                        Text(
+                            text = "Fuel: ",
+                            fontSize = 16.sp
+                        )
+                        Text(
+                            text = vehicle.fuelType.name.lowercase()
+                                .replaceFirstChar { it.uppercase() },
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
-                Spacer(Modifier.height(4.dp))
-                Row {
-                    Text(text = "Model: ")
-                    Text(text = vehicle.model)
-                }
-                Spacer(Modifier.height(4.dp))
-                Row {
-                    Text(text = "Year: ")
-                    Text(text = vehicle.year.toString())
-                }
-                Spacer(Modifier.height(4.dp))
-                Row {
-                    Text(text = "VIN: ")
-                    Text(text = vehicle.vin)
-                }
-                Spacer(Modifier.height(4.dp))
-                Row {
-                    Text(text = "Fuel: ")
-                    Text(text = vehicle.fuelType.name.lowercase().replaceFirstChar { it.uppercase() })
+                Spacer(modifier = Modifier.width(16.dp))
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    modifier = Modifier.size(28.dp)
+                        .clickable {
+                            onEditClicked(vehicle)
+                        },
+                    tint = getTheme().onSecondary,
+                    contentDescription = "Edit Vehicle Data",
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+            }
+            if (expanded) {
+                AnimatedVisibility(
+                    visible = expanded,
+                    enter = expandVertically(tween(durationMillis = 350)),
+                    exit = shrinkVertically(tween(durationMillis = 350))
+                ) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().wrapContentHeight()
+                        ) {
+                            Text(
+                                text = "Manufacturer: ",
+                                fontSize = 16.sp
+                            )
+                            Text(
+                                text = vehicle.make,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        Spacer(Modifier.height(8.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth().wrapContentHeight()
+                        ) {
+                            Text(
+                                text = "Model: ",
+                                fontSize = 16.sp
+                            )
+                            Text(
+                                text = vehicle.model,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        Spacer(Modifier.height(8.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth().wrapContentHeight()
+                        ) {
+                            Text(
+                                text = "VIN: ",
+                                fontSize = 16.sp
+                            )
+                            Text(
+                                text = vehicle.vin,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        Spacer(Modifier.height(8.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth().wrapContentHeight()
+                        ) {
+                            Text(
+                                text = "Year: ",
+                                fontSize = 16.sp
+                            )
+                            Text(
+                                text = vehicle.year.toString(),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
                 }
             }
-            Spacer(modifier = Modifier.width(16.dp))
             Icon(
-                imageVector = Icons.Default.Edit,
-                modifier = Modifier.size(32.dp)
-                    .clickable {
-                        onEditClicked(vehicle)
-                    },
-                tint = getTheme().onSecondary,
-                contentDescription = "Edit Vehicle Data",
+                modifier = Modifier.rotate(iconRotation),
+                imageVector = Icons.Default.KeyboardArrowUp,
+                contentDescription = "Collapse/Expand Card view"
             )
             Spacer(modifier = Modifier.width(8.dp))
         }
