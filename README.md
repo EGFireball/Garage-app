@@ -2,9 +2,12 @@
 
 About Garage App
 
-Garage App is a small project for managing your family vacation plans by adding your own vehicles and checking possible locations for nice, relaxing trip.
+Garage App is a small project for managing your family vacation plans by adding your own vehicles and checking possible locations for nice, relaxing walk or trip.
 The project targets latest Android version 16 of Android SDK, it's UI is written in Jetpack Compose and the project uses the latest technologies for building modern android apps, 
 such as Hild Di, Kotlin programming language, Kotlin Coroutines, Kotlin Flow, Room from Jetpack Architecture Components, Retrofit 2, etc..
+
+There are two main screens in Garage App - My Garage, in which you can add/edit your vehicles, and My Places, in which you can browse the locations you have saved in your database.
+You can mark Places as `Favorite` and you can review your favorite Places by clicking the Filter Chip `Favorite`. You can also switch the List of Places with a Map view, which to mark with pins for you all currently listed locations.
 
 Garage App has few Unit and Instrumentation tests. The Unit tests are written on the new JUnit5 platform, while the Instrumentations are running on CustomTestRunner, which implements
 AndroidJUnitRunner.
@@ -45,6 +48,3 @@ This are the more important features that the App misses so far. Other good to h
 - Better Icons
 - More functionalities, related to the Google Maps's view
 - More information about the Vehicles, like when its ensurance policy expires, etc.
-
-
-
