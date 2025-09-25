@@ -1,22 +1,23 @@
 package com.idimi.garage
 
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
-import androidx.compose.ui.test.printToLog
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.idimi.garage.api.GarageAPI
 import com.idimi.garage.datamodel.RoomDB
 import com.idimi.garage.datamodel.dao.VehicleDAO
 import com.idimi.garage.datamodel.model.FuelType
 import com.idimi.garage.datamodel.model.Vehicle
-import com.idimi.garage.repo.GarageRepo
 import com.idimi.garage.view.compose.AddVehiclePopup
 import com.idimi.garage.view.viewmodel.GarageViewModel
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -28,7 +29,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.Locale
 
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
@@ -42,7 +42,7 @@ class VehicleViewTests {
     val hiltRule = HiltAndroidRule(this)
 
     @get:Rule(order = 1)
-    val composableTestRule = createComposeRule()
+    val composeTestRule = createComposeRule()
 
     @Before
     fun before() {
@@ -68,7 +68,7 @@ class VehicleViewTests {
 
             every { db.getVehicleDao() } returns vehicleDao
 
-            composableTestRule.setContent {
+            composeTestRule.setContent {
                 AddVehiclePopup(
                     garageViewModel = viewModel,
                     vehicleForEdit = null,
@@ -77,35 +77,87 @@ class VehicleViewTests {
                 }
             }
 
-            composableTestRule.onNodeWithTag("vehicleName")
+            composeTestRule.onNodeWithTag("addVehicleSubmit")
+                .assertIsNotEnabled()
+
+            composeTestRule.onNodeWithTag("addVehicleCancel")
+                .assertIsEnabled()
+
+            composeTestRule.onNodeWithTag("vehicleName")
                 .performTextInput(testVehicle.name)
 
-            composableTestRule.onNode(
+            composeTestRule.onNode(
                 hasTestTag("vehicleName") and hasSetTextAction()
             ).assertTextEquals(testVehicle.name)
 
-            composableTestRule.onNodeWithTag("vehicleMake")
+            composeTestRule.onNodeWithTag("addVehicleSubmit")
+                .assertIsNotEnabled()
+
+            composeTestRule.onNodeWithTag("vehicleMake")
                 .performTextInput(testVehicle.make)
 
-            composableTestRule.onNode(
+            composeTestRule.onNode(
                 hasTestTag("vehicleMake") and hasSetTextAction()
             ).assertTextEquals(testVehicle.make)
 
-            composableTestRule.onNodeWithTag("vehicleModel")
+            composeTestRule.onNodeWithTag("addVehicleSubmit")
+                .assertIsNotEnabled()
+
+            composeTestRule.onNodeWithTag("vehicleModel")
                 .performTextInput(testVehicle.model)
 
-            composableTestRule.onNode(
+            composeTestRule.onNode(
                 hasTestTag("vehicleModel") and hasSetTextAction()
             ).assertTextEquals(testVehicle.model)
 
-            composableTestRule.onNodeWithTag("vehicleVIN")
+            composeTestRule.onNodeWithTag("addVehicleSubmit")
+                .assertIsNotEnabled()
+
+            composeTestRule.onNodeWithTag("vehicleVIN")
                 .performTextInput(testVehicle.vin)
 
-            composableTestRule.onNode(
+            composeTestRule.onNode(
                 hasTestTag("vehicleVIN") and hasSetTextAction()
             ).assertTextEquals(testVehicle.vin)
 
+            composeTestRule.onNodeWithTag("addVehicleSubmit")
+                .assertIsNotEnabled()
 
+            // Click to expand dropdown
+            composeTestRule
+                .onNodeWithTag("yearDropdown")
+                .performClick()
+
+            // Select an option (assuming options have text)
+            composeTestRule
+                .onNodeWithText("2023")
+                .performClick()
+
+            // Assert the selected option is displayed
+            composeTestRule
+                .onNodeWithText("2023")
+                .assertIsDisplayed()
+
+            composeTestRule.onNodeWithTag("addVehicleSubmit")
+                .assertIsNotEnabled()
+
+            // Click to expand dropdown
+            composeTestRule
+                .onNodeWithTag("fuelDropdown")
+                .performClick()
+
+            // Select an option (assuming options have text)
+            composeTestRule
+                .onNodeWithText("Electric")
+                .performClick()
+
+            // Assert the selected option is displayed
+            composeTestRule
+                .onNodeWithText("Electric")
+                .assertIsDisplayed()
+
+            composeTestRule.onNodeWithTag("addVehicleSubmit")
+                .assertIsEnabled()
         }
     }
 
@@ -128,7 +180,7 @@ class VehicleViewTests {
 
             every { db.getVehicleDao() } returns vehicleDao
 
-            composableTestRule.setContent {
+            composeTestRule.setContent {
                 AddVehiclePopup(
                     garageViewModel = viewModel,
                     vehicleForEdit = testVehicle,
@@ -137,24 +189,28 @@ class VehicleViewTests {
                 }
             }
 
-            composableTestRule.onNodeWithTag("vehicleIcon")
+            composeTestRule.onNodeWithTag("vehicleIcon")
                 .assertExists()
                 .assertIsDisplayed()
 
-            composableTestRule.onNodeWithText(testVehicle.name)
+            composeTestRule.onNodeWithText(testVehicle.name)
                 .assertExists()
                 .assertIsDisplayed()
 
-            composableTestRule.onNodeWithText(testVehicle.make)
+            composeTestRule.onNodeWithText(testVehicle.make)
                 .assertExists()
                 .assertIsDisplayed()
 
-            composableTestRule.onNodeWithText(testVehicle.model)
+            composeTestRule.onNodeWithText(testVehicle.model)
                 .assertExists()
                 .assertIsDisplayed()
 
-            composableTestRule.onNodeWithText(testVehicle.vin)
+            composeTestRule.onNodeWithText(testVehicle.vin)
                 .assertExists()
+                .assertIsDisplayed()
+
+            composeTestRule
+                .onNodeWithText(testVehicle.fuelType.name.lowercase().replaceFirstChar { it.uppercase() })//("Hybrid")
                 .assertIsDisplayed()
         }
     }

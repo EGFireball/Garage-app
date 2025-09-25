@@ -238,7 +238,7 @@ fun VehicleItem(
                 Spacer(Modifier.height(4.dp))
                 Row {
                     Text(text = "Fuel: ")
-                    Text(text = vehicle.fuelType.name.lowercase().capitalize(Locale.ROOT))
+                    Text(text = vehicle.fuelType.name.lowercase().replaceFirstChar { it.uppercase() })
                 }
             }
             Spacer(modifier = Modifier.width(16.dp))
@@ -296,7 +296,7 @@ fun AddVehiclePopup(
 
     val fuelType = remember {
         mutableStateOf(
-            vehicleForEdit?.fuelType ?: FuelType.PETROL
+            vehicleForEdit?.fuelType ?: FuelType.NONE
         )
     }
 
@@ -462,7 +462,7 @@ fun AddVehiclePopup(
                 ) {
                     YearDropdown(
                         label = "Year of production",
-                        selectedYear = vehicleForEdit?.year.toString(),
+                        selectedYearString = vehicleForEdit?.year?.toString(),
                     ) { year ->
                         yearState.intValue = year
                     }
@@ -484,11 +484,15 @@ fun AddVehiclePopup(
                 ) {
                     Spacer (Modifier.weight(1f))
                     Button(
-                        modifier = Modifier.wrapContentWidth().height(45.dp),
+                        modifier = Modifier
+                            .wrapContentWidth()
+                            .height(45.dp)
+                            .testTag("addVehicleSubmit"),
                         enabled = vehicleName.value.isNotEmpty() &&
                                 makeState.value.isNotEmpty() &&
                                 vinState.value.isNotEmpty() &&
-                                yearState.intValue != -1,
+                                yearState.intValue != -1 &&
+                                fuelType.value != FuelType.NONE,
                         onClick = {
                             coroutineScope.launch {
                                 val vehicle = Vehicle(
@@ -513,7 +517,10 @@ fun AddVehiclePopup(
                     }
                     Spacer (Modifier.weight(1f))
                     Button(
-                        modifier = Modifier.wrapContentWidth().height(45.dp),
+                        modifier = Modifier
+                            .wrapContentWidth()
+                            .height(45.dp)
+                            .testTag("addVehicleCancel"),
                         enabled = true,
                         onClick = {
                             onDismiss()

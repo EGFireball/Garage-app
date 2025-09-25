@@ -27,5 +27,5 @@ data class Vehicle(
 
 @Serializable
 enum class FuelType(type: Int) {
-    PETROL(0), DIESEL(1), ELECTRIC(2), HYBRID(3)
+    NONE(-1), PETROL(0), DIESEL(1), ELECTRIC(2), HYBRID(3)
 }

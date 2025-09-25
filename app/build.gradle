@@ -23,7 +23,7 @@ android {
 
 //        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 //        testInstrumentationRunner "de.mannodermaus.junit5.AndroidJUnit5Builder"
-        testInstrumentationRunner "com.idimi.garage.CustomTestRunner"
+        testInstrumentationRunner "com.idimi.garage.testrunner.CustomTestRunner"
     }
 
     buildTypes {

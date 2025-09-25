@@ -2,6 +2,7 @@ package com.idimi.garage.view.compose.components
 
 import android.icu.util.Calendar
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -97,26 +98,38 @@ fun BuildScreenTopBar(
 @Composable
 fun YearDropdown(
     label: String = "Year",
-    selectedYear: String?,
+    selectedYearString: String?,
     startYear: Int = 1960,
     endYear: Int = Calendar.getInstance().get(Calendar.YEAR),
     onYearSelected: (Int) -> Unit
 ) {
     val years = (startYear..endYear).toList().reversed()
     var expanded by remember { mutableStateOf(false) }
-    var selectedYear by remember { mutableStateOf<String?>(selectedYear) }
+    var selectedYear by remember {
+        mutableStateOf<String>(
+            when (selectedYearString != null) {
+                true -> selectedYearString
+                else -> {
+                    Log.e("FUCK", "MEGA KUR !!! ${endYear}")
+                    endYear.toString()
+                }
+            }
+        )
+    }
 
+    Log.e("FUCK", "SUPER KUR !!! ${selectedYear}")
     ExposedDropdownMenuBox(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .background(color = getTheme().secondaryContainer, shape = RoundedCornerShape(8.dp)),
+            .background(color = getTheme().secondaryContainer, shape = RoundedCornerShape(8.dp))
+            .testTag("yearDropdown"),
         expanded = expanded,
         onExpandedChange = {
             expanded = !expanded
         }) {
         TextField(
-            value = selectedYear ?: "",
+            value = selectedYear,
             onValueChange = { year ->
                 selectedYear = year
             },
@@ -158,7 +171,9 @@ fun YearDropdown(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FuelTypeDropDown(
-    label: String = "Fuel", selectedFuel: String?, onFuelSelected: (FuelType) -> Unit
+    label: String = "Fuel",
+    selectedFuel: String?,
+    onFuelSelected: (FuelType) -> Unit
 ) {
 
     val fuelTypes = FuelType.entries
@@ -166,10 +181,11 @@ fun FuelTypeDropDown(
     var selectedFuelType by remember {
         mutableStateOf(
             when (selectedFuel) {
+                FuelType.PETROL.name -> FuelType.PETROL
                 FuelType.DIESEL.name -> FuelType.DIESEL
                 FuelType.HYBRID.name -> FuelType.HYBRID
                 FuelType.ELECTRIC.name -> FuelType.ELECTRIC
-                else -> FuelType.PETROL
+                else -> FuelType.NONE
             }
         )
     }
@@ -178,13 +194,14 @@ fun FuelTypeDropDown(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .background(color = getTheme().secondaryContainer, shape = RoundedCornerShape(8.dp)),
+            .background(color = getTheme().secondaryContainer, shape = RoundedCornerShape(8.dp))
+            .testTag("fuelDropdown"),
         expanded = expanded,
         onExpandedChange = {
             expanded = !expanded
         }) {
         TextField(
-            value = selectedFuelType.name.lowercase().capitalize(Locale.ROOT),
+            value = selectedFuelType.name.lowercase().replaceFirstChar { it.uppercase() },
             onValueChange = { ft ->
                 selectedFuelType = fuelTypes.first { it.name == ft }
             },
@@ -211,7 +228,7 @@ fun FuelTypeDropDown(
             fuelTypes.forEach { ft ->
                 DropdownMenuItem(text = {
                     Text(
-                        text = ft.name.lowercase().capitalize(Locale.ROOT)
+                        text = ft.name.lowercase().replaceFirstChar { it.uppercase() }
                     )
                 }, onClick = {
                     selectedFuelType = ft
