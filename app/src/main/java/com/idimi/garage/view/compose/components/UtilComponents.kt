@@ -3,8 +3,6 @@ package com.idimi.garage.view.compose.components
 import android.icu.util.Calendar
 import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,21 +10,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.TextField
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
@@ -34,6 +28,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchColors
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -60,23 +55,19 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BuildScreenTopBar(
-    topBarTitle:String,
-    topAppBarHeight:MutableState<Int>,
-    topAppBarWidth:MutableState<Int>,
+    topBarTitle: String, topAppBarHeight: MutableState<Int>, topAppBarWidth: MutableState<Int>,
 //    topLeftButton1Action:(()->Unit)? = null,
 //    topLeftButton2Action:(()->Unit)? = null,
 //    topRightButton1Action:(()->Unit)? = null,
 //    topRightButton2Action:(()->Unit)? = null,
-    viewBuilder: @Composable (pv:PaddingValues) -> Unit
-){
+    viewBuilder: @Composable (pv: PaddingValues) -> Unit
+) {
 
     Scaffold(topBar = {
         CenterAlignedTopAppBar(
             title = {
             Text(
-                text = topBarTitle,
-                fontWeight = FontWeight.Bold,
-                color = getTheme().onPrimary
+                text = topBarTitle, fontWeight = FontWeight.Bold, color = getTheme().onPrimary
             )
         },
             modifier = Modifier
@@ -88,8 +79,8 @@ fun BuildScreenTopBar(
                 .onSizeChanged {
                     topAppBarHeight.value = it.height
                     topAppBarWidth.value = it.width
-                }
-            , colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = getTheme().primary)
+                },
+            colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = getTheme().primary)
 //            , navigationIcon = {
 //
 //            }
@@ -97,8 +88,7 @@ fun BuildScreenTopBar(
 //
 //            }
         )
-    }
-    ) { paddingValues ->
+    }) { paddingValues ->
         viewBuilder(paddingValues)
     }
 }
@@ -124,8 +114,7 @@ fun YearDropdown(
         expanded = expanded,
         onExpandedChange = {
             expanded = !expanded
-        }
-    ) {
+        }) {
         TextField(
             value = selectedYear ?: "",
             onValueChange = { year ->
@@ -150,21 +139,17 @@ fun YearDropdown(
             expanded = expanded,
             onDismissRequest = {
                 expanded = false
-            }
-        ) {
+            }) {
             years.forEach { year ->
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = year.toString()
-                        )
-                    },
-                    onClick = {
-                        selectedYear = year.toString()
-                        expanded = false
-                        onYearSelected(year)
-                    }
-                )
+                DropdownMenuItem(text = {
+                    Text(
+                        text = year.toString()
+                    )
+                }, onClick = {
+                    selectedYear = year.toString()
+                    expanded = false
+                    onYearSelected(year)
+                })
             }
         }
     }
@@ -173,21 +158,21 @@ fun YearDropdown(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FuelTypeDropDown(
-    label: String = "Fuel",
-    selectedFuel: String?,
-    onFuelSelected: (FuelType) -> Unit
+    label: String = "Fuel", selectedFuel: String?, onFuelSelected: (FuelType) -> Unit
 ) {
 
     val fuelTypes = FuelType.entries
     var expanded by remember { mutableStateOf(false) }
-    var selectedFuelType by remember { mutableStateOf(
-        when (selectedFuel) {
-            FuelType.DIESEL.name -> FuelType.DIESEL
-            FuelType.HYBRID.name -> FuelType.HYBRID
-            FuelType.ELECTRIC.name -> FuelType.ELECTRIC
-            else -> FuelType.PETROL
-        }
-    ) }
+    var selectedFuelType by remember {
+        mutableStateOf(
+            when (selectedFuel) {
+                FuelType.DIESEL.name -> FuelType.DIESEL
+                FuelType.HYBRID.name -> FuelType.HYBRID
+                FuelType.ELECTRIC.name -> FuelType.ELECTRIC
+                else -> FuelType.PETROL
+            }
+        )
+    }
 
     ExposedDropdownMenuBox(
         modifier = Modifier
@@ -197,8 +182,7 @@ fun FuelTypeDropDown(
         expanded = expanded,
         onExpandedChange = {
             expanded = !expanded
-        }
-    ) {
+        }) {
         TextField(
             value = selectedFuelType.name.lowercase().capitalize(Locale.ROOT),
             onValueChange = { ft ->
@@ -223,21 +207,17 @@ fun FuelTypeDropDown(
             expanded = expanded,
             onDismissRequest = {
                 expanded = false
-            }
-        ) {
+            }) {
             fuelTypes.forEach { ft ->
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = ft.name.lowercase().capitalize(Locale.ROOT)
-                        )
-                    },
-                    onClick = {
-                        selectedFuelType = ft
-                        expanded = false
-                        onFuelSelected(ft)
-                    }
-                )
+                DropdownMenuItem(text = {
+                    Text(
+                        text = ft.name.lowercase().capitalize(Locale.ROOT)
+                    )
+                }, onClick = {
+                    selectedFuelType = ft
+                    expanded = false
+                    onFuelSelected(ft)
+                })
             }
         }
     }
@@ -275,8 +255,7 @@ fun ImagePicker(
                     .background(MaterialTheme.colorScheme.surfaceVariant)
                     .clickable {
                         launcher.launch("image/*")
-                    },
-                contentAlignment = Alignment.Center
+                    }, contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Default.AddCircle,
@@ -301,28 +280,21 @@ fun CustomIconSwitch(
     iconColor: Color,
     checkedIcon: @Composable (() -> Unit)? = {
         Icon(
-            imageVector = filledIcon,
-            contentDescription = "Switch On",
-            tint = iconColor
+            imageVector = filledIcon, contentDescription = "Switch On", tint = iconColor
         )
     },
     uncheckedIcon: @Composable (() -> Unit)? = {
         Icon(
-            imageVector = outlinedIcon,
-            contentDescription = "Switch Off",
-            tint = iconColor
+            imageVector = outlinedIcon, contentDescription = "Switch Off", tint = iconColor
         )
     }
 ) {
     Switch(
-        checked = checked,
-        onCheckedChange = { isChecked ->
-            onCheckedChange(isChecked)
-        },
-        modifier = modifier,
-        thumbContent = {
-            if (checked) checkedIcon?.invoke() else uncheckedIcon?.invoke()
-        },
-        colors = colors
+        checked = checked, onCheckedChange = { isChecked ->
+        onCheckedChange(isChecked)
+    }, modifier = modifier, thumbContent = {
+        if (checked) checkedIcon?.invoke() else uncheckedIcon?.invoke()
+    }, colors = colors
     )
 }
+

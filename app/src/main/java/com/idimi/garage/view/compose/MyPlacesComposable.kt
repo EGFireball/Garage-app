@@ -91,10 +91,6 @@ fun PlacesScreen(
         mutableStateOf(false)
     }
 
-//    LaunchedEffect(Unit) {
-//        garageViewModel.getAllPlaces()
-//    }
-
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,

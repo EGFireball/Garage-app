@@ -2,6 +2,7 @@ package com.idimi.garage.view.viewmodel
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf

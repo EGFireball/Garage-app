@@ -24,6 +24,8 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SelectableChipColors
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -109,7 +111,7 @@ sealed class NavScreen(val route: String, val title: String) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomBarWithNavHost(garageViewModel: GarageViewModel) {
+fun BottomBarWithNavHost(snackbarHostState: SnackbarHostState, garageViewModel: GarageViewModel) {
     val navController = rememberNavController()
     val tabs = listOf(NavScreen.Garage, NavScreen.Places)
 
@@ -129,6 +131,7 @@ fun BottomBarWithNavHost(garageViewModel: GarageViewModel) {
         topAppBarHeight = topAppBarHeight
     ) { pv ->
         Scaffold(
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
             //modifier = Modifier.padding(pv),
             bottomBar = {
                 NavigationBar(
@@ -184,12 +187,6 @@ fun BottomBarWithNavHost(garageViewModel: GarageViewModel) {
                 }
             }
         ) { padding ->
-
-            // Get Places early so the user not to wait
-            LaunchedEffect(Unit) {
-                garageViewModel.getAllPlaces()
-            }
-
             NavHost(
                 navController = navController,
                 startDestination = NavScreen.Garage.route,

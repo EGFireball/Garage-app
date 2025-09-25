@@ -1,5 +1,6 @@
 package com.idimi.garage.sysflows
 
+import android.util.Log
 import com.idimi.garage.GarageApp
 import com.idimi.garage.datamodel.model.Place
 import com.idimi.garage.repo.GarageRepo
