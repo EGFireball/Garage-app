@@ -3,6 +3,8 @@ package com.idimi.garage.view.compose
 import android.net.Uri
 import android.util.Log
 import android.widget.Space
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -55,6 +57,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -198,7 +201,7 @@ fun VehicleItem(
                         .size(120.dp)
                         .clip(RoundedCornerShape(16.dp)),
                     imageVector = ImageVector.vectorResource(R.drawable.ic_car),
-                    contentDescription = ""
+                    contentDescription = "Default Vehicle Icon"
                 )
             }
             Spacer(modifier = Modifier.width(12.dp))
@@ -303,6 +306,15 @@ fun AddVehiclePopup(
         )
     }
 
+//    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    // Launcher to pick image from gallery
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+//        imageUri = uri
+        iconUri.value = uri
+    }
+
     Popup(
         alignment = Alignment.TopCenter,
         properties = PopupProperties(
@@ -347,13 +359,19 @@ fun AddVehiclePopup(
                             contentDescription = "Selected image",
                             modifier = Modifier
                                 .size(64.dp)
-                                .clip(RoundedCornerShape(16.dp)),
+                                .clip(RoundedCornerShape(16.dp))
+                                .testTag("vehicleIcon")
+                                .clickable {
+                                    launcher.launch("image/*")
+                                },
                             contentScale = ContentScale.Crop
                         )
                     } else {
-                        ImagePicker(modifier = Modifier.size(64.dp)) { uri ->
-                            iconUri.value = uri
-                        }
+                        ImagePicker(
+                            modifier = Modifier.size(64.dp),
+                            imageUri = iconUri,
+                            launcher = launcher
+                        )
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
@@ -370,7 +388,8 @@ fun AddVehiclePopup(
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .testTag("vehicleName"),
                     singleLine = true,
                     value = vehicleName.value,
                     shape = RoundedCornerShape(24.dp),
@@ -387,7 +406,8 @@ fun AddVehiclePopup(
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .testTag("vehicleMake"),
                     singleLine = true,
                     value = makeState.value,
                     shape = RoundedCornerShape(24.dp),
@@ -404,7 +424,8 @@ fun AddVehiclePopup(
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .testTag("vehicleModel"),
                     singleLine = true,
                     value = modelState.value,
                     shape = RoundedCornerShape(24.dp),
@@ -421,7 +442,8 @@ fun AddVehiclePopup(
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .testTag("vehicleVIN"),
                     singleLine = true,
                     value = vinState.value,
                     shape = RoundedCornerShape(24.dp),
@@ -439,7 +461,8 @@ fun AddVehiclePopup(
                     modifier = Modifier.padding(horizontal = 16.dp)
                 ) {
                     YearDropdown(
-                        label = if (yearState.intValue == -1) "Year of production" else yearState.intValue.toString()
+                        label = "Year of production",
+                        selectedYear = vehicleForEdit?.year.toString(),
                     ) { year ->
                         yearState.intValue = year
                     }
@@ -449,7 +472,8 @@ fun AddVehiclePopup(
                     modifier = Modifier.padding(horizontal = 16.dp)
                 ) {
                     FuelTypeDropDown(
-                        label = "Fuel"
+                        label = "Fuel",
+                        selectedFuel = vehicleForEdit?.fuelType?.name
                     ) { ft ->
                         fuelType.value = ft
                     }
@@ -467,12 +491,6 @@ fun AddVehiclePopup(
                                 yearState.intValue != -1,
                         onClick = {
                             coroutineScope.launch {
-//                            val path = garageViewModel.saveImageToAppStorage(
-//                                context,
-//                                iconUri.value!!,
-//                                vehicleName.value
-//                            )
-
                                 val vehicle = Vehicle(
                                     id = vehicleForEdit?.id ?: 0,
                                     name = vehicleName.value,

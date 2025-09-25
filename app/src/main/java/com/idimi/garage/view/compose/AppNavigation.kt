@@ -184,6 +184,12 @@ fun BottomBarWithNavHost(garageViewModel: GarageViewModel) {
                 }
             }
         ) { padding ->
+
+            // Get Places early so the user not to wait
+            LaunchedEffect(Unit) {
+                garageViewModel.getAllPlaces()
+            }
+
             NavHost(
                 navController = navController,
                 startDestination = NavScreen.Garage.route,

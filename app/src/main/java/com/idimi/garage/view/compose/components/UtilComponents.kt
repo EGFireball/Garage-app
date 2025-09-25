@@ -2,6 +2,7 @@ package com.idimi.garage.view.compose.components
 
 import android.icu.util.Calendar
 import android.net.Uri
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -48,6 +49,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -105,13 +107,14 @@ fun BuildScreenTopBar(
 @Composable
 fun YearDropdown(
     label: String = "Year",
+    selectedYear: String?,
     startYear: Int = 1960,
     endYear: Int = Calendar.getInstance().get(Calendar.YEAR),
     onYearSelected: (Int) -> Unit
 ) {
     val years = (startYear..endYear).toList().reversed()
     var expanded by remember { mutableStateOf(false) }
-    var selectedYear by remember { mutableStateOf("") }
+    var selectedYear by remember { mutableStateOf<String?>(selectedYear) }
 
     ExposedDropdownMenuBox(
         modifier = Modifier
@@ -124,7 +127,7 @@ fun YearDropdown(
         }
     ) {
         TextField(
-            value = selectedYear,
+            value = selectedYear ?: "",
             onValueChange = { year ->
                 selectedYear = year
             },
@@ -132,7 +135,8 @@ fun YearDropdown(
             label = { Text(label) },
             modifier = Modifier
                 .menuAnchor(MenuAnchorType.PrimaryEditable)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .testTag("vehicleYear"),
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(
                     expanded = expanded
@@ -170,13 +174,20 @@ fun YearDropdown(
 @Composable
 fun FuelTypeDropDown(
     label: String = "Fuel",
+    selectedFuel: String?,
     onFuelSelected: (FuelType) -> Unit
 ) {
 
     val fuelTypes = FuelType.entries
     var expanded by remember { mutableStateOf(false) }
-    var selectedFuelType by remember { mutableStateOf(FuelType.PETROL) }
-
+    var selectedFuelType by remember { mutableStateOf(
+        when (selectedFuel) {
+            FuelType.DIESEL.name -> FuelType.DIESEL
+            FuelType.HYBRID.name -> FuelType.HYBRID
+            FuelType.ELECTRIC.name -> FuelType.ELECTRIC
+            else -> FuelType.PETROL
+        }
+    ) }
 
     ExposedDropdownMenuBox(
         modifier = Modifier
@@ -197,7 +208,8 @@ fun FuelTypeDropDown(
             label = { Text(label) },
             modifier = Modifier
                 .menuAnchor(MenuAnchorType.PrimaryEditable)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .testTag("vehicleFuel"),
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(
                     expanded = expanded
@@ -234,25 +246,18 @@ fun FuelTypeDropDown(
 @Composable
 fun ImagePicker(
     modifier: Modifier,
-    onIconAdded: (Uri?) -> Unit
+    imageUri: MutableState<Uri?>,
+    launcher: ManagedActivityResultLauncher<String, Uri?>
 ) {
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
-    // Launcher to pick image from gallery
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        imageUri = uri
-        onIconAdded(imageUri)
-    }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = modifier
     ) {
         // Placeholder / Selected image
-        if (imageUri != null) {
-            AsyncImage( // From Coil
-                model = imageUri,
+        if (imageUri.value != null) {
+            AsyncImage(
+                model = imageUri.value,
                 contentDescription = "Selected image",
                 modifier = Modifier
                     .size(64.dp)

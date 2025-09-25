@@ -1,6 +1,7 @@
 package com.idimi.garage.view.compose
 
 import android.content.Intent
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -28,11 +29,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
 import androidx.compose.material3.SelectableChipColors
 import androidx.compose.material3.SwitchColors
 import androidx.compose.material3.Text
@@ -88,9 +91,9 @@ fun PlacesScreen(
         mutableStateOf(false)
     }
 
-    LaunchedEffect(Unit) {
-        garageViewModel.getAllPlaces()
-    }
+//    LaunchedEffect(Unit) {
+//        garageViewModel.getAllPlaces()
+//    }
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -230,6 +233,10 @@ fun PlaceCard(
         mutableStateOf(place.isFavorite)
     }
 
+    var showDefault by remember {
+        mutableStateOf(true)
+    }
+
     LaunchedEffect(key1 = Unit, key2 = triggerRecomposition.value) {
         garageViewModel.isItemFavorite(place) { favorite ->
             isFavorite.value = favorite
@@ -279,28 +286,46 @@ fun PlaceCard(
                 horizontalArrangement = Arrangement.Start
             ) {
                 Spacer(modifier = Modifier.width(8.dp))
-                AsyncImage(
-                    modifier = Modifier
-                        .size(120.dp)
-                        .clip(
-                            shape = RoundedCornerShape(
-                                corner = CornerSize(16.dp)
-                            )
-                        ),
-                    model = imageRequest,
-                    imageLoader = imageLoader,
-                    contentDescription = "COVER",
-                    contentScale = ContentScale.FillBounds,
-                    onSuccess = {
-                        //showDefault = false
-                    },
-                    onLoading = {
-                        //showDefault = true
-                    },
-                    onError = {
-                        //showDefault = true
+                Box(
+                    modifier = Modifier.size(120.dp)
+                ) {
+                    if (showDefault) {
+                        Icon(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(
+                                    shape = RoundedCornerShape(
+                                        corner = CornerSize(16.dp)
+                                    )
+                                ),
+                            imageVector = Icons.Default.LocationOn,
+                            tint = getTheme().onPrimary,
+                            contentDescription = "Default Cover"
+                        )
                     }
-                )
+                    AsyncImage(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(
+                                shape = RoundedCornerShape(
+                                    corner = CornerSize(16.dp)
+                                )
+                            ),
+                        model = imageRequest,
+                        imageLoader = imageLoader,
+                        contentDescription = "COVER",
+                        contentScale = ContentScale.FillBounds,
+                        onSuccess = {
+                            showDefault = false
+                        },
+                        onLoading = {
+                            showDefault = true
+                        },
+                        onError = {
+                            showDefault = true
+                        }
+                    )
+                }
                 Spacer(Modifier.width(8.dp))
                 Column(
                     modifier = Modifier

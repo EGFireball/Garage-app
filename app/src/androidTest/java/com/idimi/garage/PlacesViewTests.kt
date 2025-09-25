@@ -3,7 +3,6 @@ package com.idimi.garage
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -17,10 +16,9 @@ import com.idimi.garage.view.compose.PlaceCard
 import com.idimi.garage.view.viewmodel.GarageViewModel
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -38,7 +36,6 @@ class PlacesViewTests {
     val hiltRule = HiltAndroidRule(this)
 
     @get:Rule(order = 1)
-//    val composableTestRule = createAndroidComposeRule<MainActivity>()
     val composableTestRule = createComposeRule()
 
     @Before
@@ -48,7 +45,7 @@ class PlacesViewTests {
 
     @Test
     fun checkPlaceCard() {
-        runBlocking {
+        runTest {
 
             val mockPlace = Place(
                 id = 0,

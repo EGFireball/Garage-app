@@ -4,19 +4,23 @@ import com.google.common.truth.Truth.assertThat
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import com.google.gson.reflect.TypeToken
 import com.idimi.garage.api.GarageAPI
+import com.idimi.garage.api.pojo.ErrorPojo
 import com.idimi.garage.api.pojo.PoisPojo
 import com.idimi.garage.datamodel.RoomDB
 import com.idimi.garage.datamodel.dao.PlaceDAO
 import com.idimi.garage.datamodel.model.Place
 import com.idimi.garage.repo.GarageRepo
+import com.idimi.garage.util.concat
 import com.idimi.garage.view.viewmodel.GarageViewModel
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.jupiter.api.Test
 import retrofit2.Response
 
@@ -79,7 +83,7 @@ class PlaceServiceTests {
 
     // This test checks the `collectPlacesAsFlow()` function.
     @Test
-    fun placesSysFlowTest() {
+    fun placesSysFlowTestHappyPath() {
         runTest {
             val viewModel: GarageViewModel = mockk()
 
@@ -127,6 +131,79 @@ class PlaceServiceTests {
 
             assertThat(items).isEqualTo(expected)
             assertThat(items[0].poiId).isEqualTo(expected[0].poiId)
+        }
+    }
+
+    @Test
+    fun placesSysFlowTestEmpty() {
+        runTest {
+
+            val viewModel: GarageViewModel = mockk()
+
+            coEvery { placeDao.getAllPlacesAsFlow() } returns flowOf(emptyList<Place>())
+            coEvery { viewModel.getAllPlaces() } returns emptyList<Place>().toMutableList()
+
+            val items = viewModel.getAllPlaces()
+            assertThat(items).isEqualTo(emptyList<Place>())
+        }
+    }
+
+    @Test
+    fun placesSysFlowTestError() {
+        runTest {
+            val repo: GarageRepo = mockk()
+
+            /**
+             * Response from Postman
+             *
+             * 422 Unprocessable Entity
+             *
+             * {
+             *     "errors": [
+             *         {
+             *             "field": "sw_corner",
+             *             "message": "is not a LONG,LAT string"
+             *         },
+             *         {
+             *             "field": "ne_corner",
+             *             "message": "is not a LONG,LAT string"
+             *         }
+             *     ]
+             * }
+             */
+
+            val mockErrorsPojo = arrayListOf(
+                ErrorPojo(
+                    field = "sw_corner",
+                    message = "is not a LONG,LAT string"
+                ),
+                ErrorPojo(
+                    field = "ne_corner",
+                    message = "is not a LONG,LAT string"
+                )
+            )
+
+            val message = mockErrorsPojo.map { it.message ?: "" }.concat()
+
+            val errorBody = Gson().toJson(mockErrorsPojo)
+                .toResponseBody("application/json".toMediaType())
+
+            val errorResponse: Response<JsonObject> = Response.error(422, errorBody)
+
+            coEvery { repo.garageAPI } returns api
+            coEvery { api.getPois() } returns errorResponse
+
+            val type = object : TypeToken<List<ErrorPojo>>() {}.type
+            val errorResponseBody = runCatching {
+                Gson().fromJson<List<ErrorPojo>>(errorResponse.errorBody()!!.string(), type)
+            }.getOrElse { emptyList() }
+
+            assertThat(errorResponseBody).isNotEqualTo(null)
+            assertThat(errorResponseBody.size).isEqualTo(mockErrorsPojo.size)
+            assertThat(errorResponseBody[0].field).isEqualTo(mockErrorsPojo[0].field)
+            assertThat(errorResponseBody[0].message).isEqualTo(mockErrorsPojo[0].message)
+            assertThat(errorResponseBody[1].field).isEqualTo(mockErrorsPojo[1].field)
+            assertThat(errorResponseBody[1].message).isEqualTo(mockErrorsPojo[1].message)
         }
     }
 }
