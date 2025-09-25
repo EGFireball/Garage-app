@@ -1,6 +1,6 @@
 # Garage-app
 
-About Garage App
+About Garage App\n
 Garage App is a small project for managing your family vacation plans by adding your own vehicles and checking possible locations for nice, relaxing trip.
 The project targets latest Android version 16 of Android SDK, it's UI is written in Jetpack Compose and the project uses the latest technologies for building modern android apps, 
 such as Hild Di, Kotlin programming language, Kotlin Coroutines, Kotlin Flow, Room from Jetpack Architecture Components, Retrofit 2, etc..
