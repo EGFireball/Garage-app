@@ -5,6 +5,7 @@ import android.widget.ImageButton
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -263,7 +264,7 @@ fun PlaceCard(
     }
 
     val iconRotation by animateFloatAsState(
-        if (expanded) 180f else 0f, tween(durationMillis = 350)
+        if (expanded) 180f else 0f, tween(durationMillis = 300)
     )
 
     val isFavorite = remember {
@@ -434,8 +435,8 @@ fun PlaceCard(
             // Expandable content
             AnimatedVisibility(
                 visible = expanded,
-                enter = expandVertically(tween(durationMillis = 350)),
-                exit = shrinkVertically(tween(durationMillis = 350))
+                enter = expandVertically(spring(dampingRatio = 0.75f)),//tween(durationMillis = 300)),
+                exit = shrinkVertically(spring(dampingRatio = 0.75f))//tween(durationMillis = 300))
             ) {
                 MapElement(
                     modifier = Modifier

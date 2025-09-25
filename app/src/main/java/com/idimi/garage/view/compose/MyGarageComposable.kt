@@ -7,6 +7,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -113,7 +114,8 @@ fun MyGarage(
     Box(modifier = modifier.fillMaxSize()) {
         if (vehicles.value.isEmpty()) {
             Column(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
                     .clickable {
                         showAddVehiclePopup = true
                     },
@@ -185,7 +187,7 @@ fun VehicleItem(
     }
 
     val iconRotation by animateFloatAsState(
-        if (expanded) 180f else 0f, tween(durationMillis = 350)
+        if (expanded) 180f else 0f, tween(durationMillis = 300)
     )
 
     Card(
@@ -211,7 +213,9 @@ fun VehicleItem(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
@@ -269,7 +273,8 @@ fun VehicleItem(
                 Spacer(modifier = Modifier.width(16.dp))
                 Icon(
                     imageVector = Icons.Default.Edit,
-                    modifier = Modifier.size(28.dp)
+                    modifier = Modifier
+                        .size(28.dp)
                         .clickable {
                             onEditClicked(vehicle)
                         },
@@ -278,76 +283,82 @@ fun VehicleItem(
                 )
                 Spacer(modifier = Modifier.width(12.dp))
             }
-            if (expanded) {
-                AnimatedVisibility(
-                    visible = expanded,
-                    enter = expandVertically(tween(durationMillis = 350)),
-                    exit = shrinkVertically(tween(durationMillis = 350))
+            AnimatedVisibility(
+                visible = expanded,
+                enter = expandVertically(animationSpec = spring(dampingRatio = 0.75f)),//tween(durationMillis = 300)),
+                exit = shrinkVertically(spring(dampingRatio = 0.75f))
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
                     Spacer(modifier = Modifier.height(8.dp))
-                    Column(
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentHeight()
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
                     ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth().wrapContentHeight()
-                        ) {
-                            Text(
-                                text = "Manufacturer: ",
-                                fontSize = 16.sp
-                            )
-                            Text(
-                                text = vehicle.make,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        Spacer(Modifier.height(8.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth().wrapContentHeight()
-                        ) {
-                            Text(
-                                text = "Model: ",
-                                fontSize = 16.sp
-                            )
-                            Text(
-                                text = vehicle.model,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        Spacer(Modifier.height(8.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth().wrapContentHeight()
-                        ) {
-                            Text(
-                                text = "VIN: ",
-                                fontSize = 16.sp
-                            )
-                            Text(
-                                text = vehicle.vin,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        Spacer(Modifier.height(8.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth().wrapContentHeight()
-                        ) {
-                            Text(
-                                text = "Year: ",
-                                fontSize = 16.sp
-                            )
-                            Text(
-                                text = vehicle.year.toString(),
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
+                        Text(
+                            text = "Manufacturer: ",
+                            fontSize = 16.sp
+                        )
+                        Text(
+                            text = vehicle.make,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                    ) {
+                        Text(
+                            text = "Model: ",
+                            fontSize = 16.sp
+                        )
+                        Text(
+                            text = vehicle.model,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                    ) {
+                        Text(
+                            text = "VIN: ",
+                            fontSize = 16.sp
+                        )
+                        Text(
+                            text = vehicle.vin,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                    ) {
+                        Text(
+                            text = "Year: ",
+                            fontSize = 16.sp
+                        )
+                        Text(
+                            text = vehicle.year.toString(),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
             }
@@ -585,7 +596,9 @@ fun AddVehiclePopup(
                 }
                 Spacer(Modifier.height(16.dp))
                 Row(
-                    modifier = Modifier.fillMaxWidth().wrapContentHeight()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
                 ) {
                     Spacer (Modifier.weight(1f))
                     Button(
