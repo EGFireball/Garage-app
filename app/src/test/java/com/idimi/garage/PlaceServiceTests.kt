@@ -1,5 +1,6 @@
 package com.idimi.garage
 
+import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.google.gson.Gson
 import com.google.gson.JsonArray
@@ -17,6 +18,9 @@ import com.idimi.garage.view.viewmodel.GarageViewModel
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import okhttp3.MediaType.Companion.toMediaType
@@ -24,6 +28,7 @@ import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.jupiter.api.Test
 import retrofit2.Response
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class PlaceServiceTests {
 
     val api: GarageAPI = mockk()
@@ -125,12 +130,12 @@ class PlaceServiceTests {
             coEvery { placeDao.insert(any()) } returns Unit
             coEvery { placeDao.getAllPlacesAsFlow() } returns flowOf(expected)
             // collectPlacesAsFlow() is called inside getAllPlaces()
-            coEvery { viewModel.getAllPlaces() } returns expected.toMutableList()
+            coEvery { viewModel.placesStateFlow } returns MutableStateFlow(expected)
 
-            val items = viewModel.getAllPlaces()
-
-            assertThat(items).isEqualTo(expected)
-            assertThat(items[0].poiId).isEqualTo(expected[0].poiId)
+            viewModel.placesStateFlow.test {
+                assertThat(expected).isEqualTo(awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
         }
     }
 
@@ -140,11 +145,13 @@ class PlaceServiceTests {
 
             val viewModel: GarageViewModel = mockk()
 
-            coEvery { placeDao.getAllPlacesAsFlow() } returns flowOf(emptyList<Place>())
-            coEvery { viewModel.getAllPlaces() } returns emptyList<Place>().toMutableList()
+            coEvery { placeDao.getAllPlacesAsFlow() } returns flowOf(emptyList())
+            coEvery { viewModel.placesStateFlow } returns MutableStateFlow(emptyList())
 
-            val items = viewModel.getAllPlaces()
-            assertThat(items).isEqualTo(emptyList<Place>())
+            viewModel.placesStateFlow.test {
+                assertThat(emptyList<Place>()).isEqualTo(awaitItem())
+                cancelAndIgnoreRemainingEvents()
+            }
         }
     }
 

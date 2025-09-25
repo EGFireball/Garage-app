@@ -47,7 +47,6 @@ class GarageViewModel @Inject constructor(
                 _placesStateFlow.emit(result.data)
             }
         }
-        allPlaces
     }
 
     fun showOnlyFavoritePlaces() {

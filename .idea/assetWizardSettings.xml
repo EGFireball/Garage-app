@@ -314,8 +314,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="ic_garage" />
-                            <entry key="sourceFile" value="$USER_HOME$/Downloads/garage.svg" />
+                            <entry key="outputName" value="ic_outlined_heart" />
+                            <entry key="sourceFile" value="$USER_HOME$/Downloads/outlined_heart.svg" />
                           </map>
                         </option>
                       </PersistentState>

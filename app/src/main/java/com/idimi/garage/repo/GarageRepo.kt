@@ -57,7 +57,7 @@ class GarageRepo @Inject constructor(
     suspend fun changeFavoriteStateForPlace(isFavorite: Boolean, place: Place, updateUi: (Boolean) -> Unit) = withContext(Dispatchers.IO) {
         place.isFavorite = isFavorite
         place.update(db)
-        val dbPoi = db.getPlaceDao().getPoiById(place.poiId)
+        val dbPoi = db.getPlaceDao().getPlaceById(place.poiId)
         updateUi(dbPoi.isFavorite)
     }
 }

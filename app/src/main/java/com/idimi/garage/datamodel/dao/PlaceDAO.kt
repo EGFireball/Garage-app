@@ -20,5 +20,5 @@ interface PlaceDAO {
     fun getAllPlacesAsFlow(): Flow<List<Place>>
 
     @Query("SELECT * FROM pois WHERE poiId = :poiId")
-    suspend fun getPoiById(poiId: Int): Place
+    suspend fun getPlaceById(poiId: Int): Place
 }
