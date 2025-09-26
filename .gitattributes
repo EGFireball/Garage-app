@@ -1,2 +1,6 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Force Kotlin classification for all .kt files
+*.kt linguist-language=Kotlin
+# Ignore HTML files (like assets or docs) from stats
+*.html linguist-detectable=false
+# Ignore generated files in build folders
+/build/* linguist-vendored
