@@ -436,7 +436,7 @@ fun PlaceCard(
             AnimatedVisibility(
                 visible = expanded,
                 enter = expandVertically(spring(dampingRatio = 0.75f)),//tween(durationMillis = 300)),
-                exit = shrinkVertically(spring(dampingRatio = 0.75f))//tween(durationMillis = 300))
+                exit = shrinkVertically(spring(dampingRatio = 1f))//tween(durationMillis = 300))
             ) {
                 MapElement(
                     modifier = Modifier
