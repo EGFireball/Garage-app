@@ -110,14 +110,12 @@ fun YearDropdown(
             when (selectedYearString != null) {
                 true -> selectedYearString
                 else -> {
-                    Log.e("FUCK", "MEGA KUR !!! ${endYear}")
                     endYear.toString()
                 }
             }
         )
     }
-
-    Log.e("FUCK", "SUPER KUR !!! ${selectedYear}")
+    
     ExposedDropdownMenuBox(
         modifier = Modifier
             .fillMaxWidth()
